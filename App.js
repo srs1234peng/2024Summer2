@@ -3,12 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import Header from './component/Header';
 
 export default function App() {
-  const {appName} = "NewApp";
+  const appName = "NewApp";
   return (
     <View style={styles.container}>
-      <Header />
-      <Text>Welcome to NewApp</Text>
+      {/* use a prop to pass appName to Header*/}
+      <Header name = {appName} theme = "dark"></Header>
       <StatusBar style="auto" />
+      <Text>children</Text>
     </View>
   );
 }
