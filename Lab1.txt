@@ -1,0 +1,10 @@
+1. How is onChange prop different from onChangeText prop?
+(1) the parameter type is different. onChange provides an event object, while onChangeText returns the new text value.
+(2) so if we are sure that we only need text value, onChangeText is more convenient, as onChange need extra steps to extract the text value.
+(3) onChange, is more suitable for various event handling cases.
+
+2. How can you mask the text input for passwords?
+We could utilize the secureTextEntry property of TextInput component. 
+If true, the text input obscures the text entered so that sensitive text like passwords stay secure. 
+When secureTextEntry is set to true, the input text will be hidden, making it suitable for password fields.
+
