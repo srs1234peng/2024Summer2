@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, View, Button } from "react-native";
 
 const Input = () => {
   const [text, setText] = useState("");
   const [thankYouVisible, setThankYouVisible] = useState(false);
   const inputRef = useRef();
+  function handleConfirm() { console.log("Button pressed")}
 
   useEffect(() => {
     inputRef.current.focus(); // focus the TextInput
@@ -37,12 +38,14 @@ const Input = () => {
         onFocus={handleFocus}
         onBlur={handleBlur}
       />
-      {thankYouVisible && (
-        <Text>Thank you</Text>
-      )}
       <Text>
         You typed: {text}
       </Text>
+      {thankYouVisible && (
+        <Text>Thank you</Text>
+      )}
+      <Button title = "Confirm" onPress = {() => {
+        handleConfirm();}}/>
     </View>
   );
 };
