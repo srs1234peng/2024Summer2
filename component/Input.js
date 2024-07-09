@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, TextInput, View, Button } from "react-native";
+import { Text, TextInput, View, Button, Modal, StyleSheet } from "react-native";
 
-const Input = ({inputHandler}) => {
+const Input = ({inputHandler, isModalVisible}) => {
   const [text, setText] = useState("");
   const [thankYouVisible, setThankYouVisible] = useState(false);
   const inputRef = useRef(null);
@@ -35,23 +35,34 @@ const Input = ({inputHandler}) => {
   };
 
   return (
-    <View>
-      <TextInput
-        ref={inputRef}
-        placeholder="Type here"
-        value={text}
-        onChangeText={handleChangeText}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-      <Text>You typed: {text}</Text>
-      {thankYouVisible && <Text>Thank you</Text>}
-      <Button
-        title="Confirm"
-        onPress={handleConfirm}
-      />
-    </View>
+    <Modal animationType="slide" visible={isModalVisible}>
+      <View style={styles.container}>
+        <TextInput
+          ref={inputRef}
+          placeholder="Type here"
+          value={text}
+          onChangeText={handleChangeText}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+        <Text>You typed: {text}</Text>
+        {thankYouVisible && <Text>Thank you</Text>}
+        <Button
+          title="Confirm"
+          onPress={handleConfirm}
+        />
+      </View>
+    </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default Input;
