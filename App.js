@@ -21,16 +21,21 @@ export default function App() {
   return (
     <View style={styles.container}>
       {/* use a prop to pass appName to Header*/}
-      <Header name = {appName} theme = "dark"></Header>
-      {/*<Text>child1</Text>*/}
-      {/*<Text>child2</Text>*/}
-      <Input inputHandler = {handleInputData} isModalVisible={modalVisible}/>
-      <Text>{receivedText}</Text>
+      <View style={styles.topContainer}>
+        <Header name = {appName} theme = "dark"></Header>
+        {/*<Text>child1</Text>*/}
+        {/*<Text>child2</Text>*/}
+          <Input inputHandler = {handleInputData} 
+          isModalVisible={modalVisible}/>
+        <Text style={styles.textStyle}>{receivedText}</Text>
+      </View>
       <StatusBar style="auto" />
+      <View style={styles.bottomContainer}>
       <Button 
         title="Add a goal"
         onPress={() => setModalVisible(true)}
       />
+      </View>
     </View>
   );
 }
@@ -42,4 +47,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  textStyle:{
+    fontSize: 20,
+    color: 'blue'
+  },
+  topContainer:{
+    flex: 1,
+    backgroundColor: 'coral',
+  },
+  bottomContainer:{
+    flex: 4,
+    backgroundColor: 'lightblue',
+  }
 });

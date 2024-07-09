@@ -35,7 +35,7 @@ const Input = ({inputHandler, isModalVisible}) => {
   };
 
   return (
-    <Modal animationType="slide" visible={isModalVisible}>
+    <Modal animationType="slide" visible={isModalVisible} style={styles.modalStyle}>
       <View style={styles.container}>
         <TextInput
           ref={inputRef}
@@ -47,10 +47,12 @@ const Input = ({inputHandler, isModalVisible}) => {
         />
         <Text>You typed: {text}</Text>
         {thankYouVisible && <Text>Thank you</Text>}
-        <Button
-          title="Confirm"
-          onPress={handleConfirm}
-        />
+        <View style={styles.buttonStyle}>
+          <Button
+            title="Confirm"
+            onPress={handleConfirm}
+          />
+        </View>
       </View>
     </Modal>
   );
@@ -62,6 +64,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonStyle: {
+    width: "30%",
+    margin: 5,
+  },
+  modalStyle: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    transparent: false,
   },
 });
 
