@@ -11,11 +11,17 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
     console.log("User typed ", text);
     inputHandler(text);
     setText(""); // Clear the input after confirming
+    setThankYouVisible(false);
+    setIsConfirmDisabled(true);
   };
 
   const handleCancel = () => {
-    onCancel();
+    if (onCancel) {
+      onCancel();
+    }
     setText(""); // Clear the input after canceling
+    setThankYouVisible(false);
+    setIsConfirmDisabled(true);
   };
 
   useEffect(() => {
@@ -37,68 +43,78 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
   const handleChangeText = (newText) => {
     console.log("Text changed to:", newText);
     setText(newText);
-    // Hide "Thank you" text when user starts typing
-    setThankYouVisible(false);
+    setThankYouVisible(false); // Hide "Thank you" text when user starts typing
     setIsConfirmDisabled(newText.trim() === ""); // Disable confirm button if text is empty
   };
 
   return (
-    <Modal animationType="slide" visible={isModalVisible} style={styles.modalStyle}>
-      <View style={styles.container}>
-        <TextInput
-          ref={inputRef}
-          placeholder="Type here"
-          value={text}
-          onChangeText={handleChangeText}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-        <Text>You typed: {text}</Text>
-        {thankYouVisible && <Text>Thank you</Text>}
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Confirm"
-            onPress={handleConfirm}
-            disabled={isConfirmDisabled}
+    <Modal animationType="slide" visible={isModalVisible} transparent={true}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.container}>
+          <TextInput
+            ref={inputRef}
+            placeholder="Type here"
+            value={text}
+            onChangeText={handleChangeText}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            style={styles.input}
           />
-          <Button
-            title="Cancel"
-            onPress={handleCancel}
+          <Text>You typed: {text}</Text>
+          {thankYouVisible && <Text>Thank you</Text>}
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Confirm"
+              onPress={handleConfirm}
+              disabled={isConfirmDisabled}
+            />
+            <Button
+              title="Cancel"
+              onPress={handleCancel}
+            />
+          </View>
+          <Image 
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }} 
+            style={styles.imageStyle} 
+            alt="Network Image"
+          />
+          <Image 
+            source={require("D:/learning/code/CS5520/2024Summer2/public/wayvsticker.png")}
+            style={styles.imageStyle} 
+            alt="Local Image"
           />
         </View>
-        <Image 
-          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }} 
-          style={styles.imageStyle} 
-          alt="Network Image"
-        />
-        <Image 
-          source={require("D:/learning/code/CS5520/2024Summer2/public/1.svg")} 
-          style={styles.imageStyle} 
-          alt="Local Image"
-        />
       </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalOverlay: {
     flex: 1,
-    backgroundColor: 'grey',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  container: {
+    width: 300,
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  input: {
+    width: '100%',
+    borderBottomWidth: 1,
+    marginBottom: 10,
+    padding: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '80%',
+    width: '100%',
     marginTop: 20,
-  },
-  modalStyle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    transparent: false,
   },
   imageStyle: {
     width: 100,
