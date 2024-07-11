@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Header from './component/Header';
 import React, { useState } from 'react';
 import Input from './component/Input';
@@ -43,13 +43,23 @@ export default function App() {
       {goals.length === 0 ? (
           <Text style={styles.textStyle}>Please Add A Goal</Text>
         ) : (
-          <ScrollView>
-            <View>
-              {goals.map((goal) => (
-                <Text key={goal.id} style={styles.textStyle}>{goal.text}</Text>
-              ))}
-            </View>
-          </ScrollView>
+            // <ScrollView>
+            //   <View>
+            //     {goals.map((goal) => (
+            //       <Text key={goal.id} style={styles.textStyle}>{goal.text}</Text>
+            //     ))}
+            //   </View>
+            // </ScrollView>
+          <FlatList
+            renderItem={({item}) => {
+              return (
+                <View key={item.id} style={styles.textContainer}>
+                  <Text style={styles.textStyle}>{item.text}</Text>
+                  </View>
+              );
+            }}
+            data={goals}
+          />
         )}
       </View>
       <StatusBar style="auto" />
