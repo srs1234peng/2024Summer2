@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import Header from './component/Header';
 import React, { useState } from 'react';
 import Input from './component/Input';
@@ -23,6 +23,14 @@ export default function App() {
     setModalVisible(false);
   }
 
+  const GoalItem = ({ goal }) => {
+    return (
+      <View style={styles.textContainer}>
+        <Text style={styles.textStyle}>{goal.text}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -40,26 +48,23 @@ export default function App() {
         />
       </View>
       <View style={styles.bottomContainer}>
-      {goals.length === 0 ? (
+        {goals.length === 0 ? (
           <Text style={styles.textStyle}>Please Add A Goal</Text>
         ) : (
-            // <ScrollView>
+          <FlatList
+            data={goals}
+            renderItem={({ item }) => (
+              <GoalItem goal={item} />
+            )}
+            keyExtractor={(item) => item.id}
+          />
+          // <ScrollView>
             //   <View>
             //     {goals.map((goal) => (
             //       <Text key={goal.id} style={styles.textStyle}>{goal.text}</Text>
             //     ))}
             //   </View>
             // </ScrollView>
-          <FlatList
-            renderItem={({item}) => {
-              return (
-                <View key={item.id} style={styles.textContainer}>
-                  <Text style={styles.textStyle}>{item.text}</Text>
-                  </View>
-              );
-            }}
-            data={goals}
-          />
         )}
       </View>
       <StatusBar style="auto" />
@@ -109,5 +114,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '80%',
     alignItems: 'center',
+  },
+  textContainer: {
+    marginVertical: 10, // Added for better spacing between items
   },
 });
