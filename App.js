@@ -3,6 +3,7 @@ import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import Header from './component/Header';
 import React, { useState } from 'react';
 import Input from './component/Input';
+import GoalItem from './component/GoalItem'; // Import GoalItem
 
 export default function App() {
   const appName = "My awesome app";
@@ -18,18 +19,16 @@ export default function App() {
     setModalVisible(false);
   }
   
+  function handleDeleteGoal(deletedId) {
+    // callback function to delete goal
+    console.log("Goal deleted.", deletedId);
+    setGoals((currentGoals) => currentGoals.filter(goal => goal.id !== deletedId));
+  }
+
   const handleCancel = () => {
     console.log("Cancel button pressed");
     setModalVisible(false);
   }
-
-  const GoalItem = ({ goal }) => {
-    return (
-      <View style={styles.textContainer}>
-        <Text style={styles.textStyle}>{goal.text}</Text>
-      </View>
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -54,17 +53,10 @@ export default function App() {
           <FlatList
             data={goals}
             renderItem={({ item }) => (
-              <GoalItem goal={item} />
+              <GoalItem goal={item} deleteHandler={handleDeleteGoal} />
             )}
             keyExtractor={(item) => item.id}
           />
-          // <ScrollView>
-            //   <View>
-            //     {goals.map((goal) => (
-            //       <Text key={goal.id} style={styles.textStyle}>{goal.text}</Text>
-            //     ))}
-            //   </View>
-            // </ScrollView>
         )}
       </View>
       <StatusBar style="auto" />
@@ -114,8 +106,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '80%',
     alignItems: 'center',
-  },
-  textContainer: {
-    marginVertical: 10, // Added for better spacing between items
   },
 });
