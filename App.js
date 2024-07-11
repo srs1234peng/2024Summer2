@@ -7,13 +7,14 @@ import Input from './component/Input';
 export default function App() {
   const appName = "My awesome app";
   
-  const [receivedText, setReceivedText] = useState(""); 
-  const [modalVisible, setModalVisible] = useState(false); // initialize modalVisible with false
+  const [goals, setGoals] = useState([]); 
+  const [modalVisible, setModalVisible] = useState(false); 
 
   // to receive data add a parameter
   function handleInputData(data){
     console.log("callback fn called with data: ", data);
-    setReceivedText(data);
+    const newGoal = { text: data, id: Math.random().toString() };
+    setGoals((currentGoals) => [...currentGoals, newGoal]);
     setModalVisible(false);
   }
   
@@ -34,16 +35,18 @@ export default function App() {
           onCancel={handleCancel}
         />
         <Button 
-            title="Add a goal"
-            onPress={() => setModalVisible(true)}
-          />
-        <Text style={styles.textStyle}>{receivedText}</Text>
+          title="Add a goal"
+          onPress={() => setModalVisible(true)}
+        />
       </View>
       <View style={styles.bottomContainer}>
-        <View style={styles.buttonContainer}>
-          <Text style={styles.textStyle}>Test</Text>
+        <View>
+          {goals.map((goal) => (
+            <Text key={goal.id} style={styles.textStyle}>{goal.text}</Text>
+          ))}
         </View>
       </View>
+      <StatusBar style="auto" />
     </View>
   );
 }
@@ -72,6 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd', 
     borderRadius: 5,
     marginTop: 20,
+    padding: 10, 
   },
   topContainer: {
     flex: 2,
