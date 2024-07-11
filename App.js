@@ -1,14 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import Header from './component/Header';
-import React, { useState } from 'react'; // import useState
+import React, { useState } from 'react';
 import Input from './component/Input';
 
 export default function App() {
-  const appName = "Summer 2024";
+  const appName = "My awesome app";
   
   const [receivedText, setReceivedText] = useState(""); 
-
   const [modalVisible, setModalVisible] = useState(false); // initialize modalVisible with false
 
   // to receive data add a parameter
@@ -25,44 +24,70 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      {/* use a prop to pass appName to Header*/}
       <View style={styles.topContainer}>
-        <Header name = {appName} theme = "dark"></Header>
-        {/*<Text>child1</Text>*/}
-        {/*<Text>child2</Text>*/}
-          <Input inputHandler = {handleInputData} 
+        <View style={styles.header}>
+          <Header name={appName} theme="dark" />
+        </View>
+        <Input 
+          inputHandler={handleInputData} 
           isModalVisible={modalVisible}
-          onCancel={handleCancel}/>
+          onCancel={handleCancel}
+        />
+        <Button 
+            title="Add a goal"
+            onPress={() => setModalVisible(true)}
+          />
         <Text style={styles.textStyle}>{receivedText}</Text>
       </View>
-      <StatusBar style="auto" />
       <View style={styles.bottomContainer}>
-      <Button 
-        title="Add a goal"
-        onPress={() => setModalVisible(true)}
-      />
+        <View style={styles.buttonContainer}>
+          <Text style={styles.textStyle}>Test</Text>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    color: 'purple',
+    fontSize: 30,
+    borderColor: 'purple',
+    borderWidth: 2,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+  },
+  textStyle: {
+    fontSize: 20,
+    color: 'blue',
+    textAlign: 'center',
+    backgroundColor: '#ddd', 
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  topContainer: {
+    flex: 2,
+    backgroundColor: '#EDE7F6',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textStyle:{
-    fontSize: 20,
-    color: 'blue'
-  },
-  /*topContainer:{
-    flex: 1,
-    backgroundColor: 'coral',
-  },*/
-  /*bottomContainer:{
+  bottomContainer: {
     flex: 4,
-    backgroundColor: 'lightblue',
-  }*/
+    backgroundColor: '#D1C4E9',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+  },
+  buttonContainer: {
+    width: '80%',
+    alignItems: 'center',
+  },
 });

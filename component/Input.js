@@ -79,7 +79,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
             alt="Network Image"
           />
           <Image 
-            source={require("D:/learning/code/CS5520/2024Summer2/public/wayvsticker.png")}
+            source={require('../public/wayvsticker.png')} 
             style={styles.imageStyle} 
             alt="Local Image"
           />
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: 'grey',
   },
   container: {
     width: 300,
