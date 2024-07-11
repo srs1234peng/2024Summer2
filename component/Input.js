@@ -1,21 +1,34 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Text, TextInput, View, Button, Modal, StyleSheet } from "react-native";
+import { Text, TextInput, View, Button, Modal, StyleSheet, Image } from "react-native";
 
-const Input = ({inputHandler, isModalVisible}) => {
+const Input = ({ inputHandler, isModalVisible, onCancel }) => {
   const [text, setText] = useState("");
   const [thankYouVisible, setThankYouVisible] = useState(false);
+  const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
   const inputRef = useRef(null);
 
   const handleConfirm = () => {
     console.log("User typed ", text);
     inputHandler(text);
+    setText(""); // Clear the input after confirming
+    setThankYouVisible(false);
+    setIsConfirmDisabled(true);
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    }
+    setText(""); // Clear the input after canceling
+    setThankYouVisible(false);
+    setIsConfirmDisabled(true);
   };
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus(); // focus the TextInput
     }
-  }, []);
+  }, [isModalVisible]);
 
   const handleFocus = () => {
     console.log("Input focused");
@@ -30,27 +43,45 @@ const Input = ({inputHandler, isModalVisible}) => {
   const handleChangeText = (newText) => {
     console.log("Text changed to:", newText);
     setText(newText);
-    // Hide "Thank you" text when user starts typing
-    setThankYouVisible(false);
+    setThankYouVisible(false); // Hide "Thank you" text when user starts typing
+    setIsConfirmDisabled(newText.trim() === ""); // Disable confirm button if text is empty
   };
 
   return (
-    <Modal animationType="slide" visible={isModalVisible} style={styles.modalStyle}>
-      <View style={styles.container}>
-        <TextInput
-          ref={inputRef}
-          placeholder="Type here"
-          value={text}
-          onChangeText={handleChangeText}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-        <Text>You typed: {text}</Text>
-        {thankYouVisible && <Text>Thank you</Text>}
-        <View style={styles.buttonStyle}>
-          <Button
-            title="Confirm"
-            onPress={handleConfirm}
+    <Modal animationType="slide" visible={isModalVisible} transparent={true}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.container}>
+          <TextInput
+            ref={inputRef}
+            placeholder="Type here"
+            value={text}
+            onChangeText={handleChangeText}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            style={styles.input}
+          />
+          <Text>You typed: {text}</Text>
+          {thankYouVisible && <Text>Thank you</Text>}
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Confirm"
+              onPress={handleConfirm}
+              disabled={isConfirmDisabled}
+            />
+            <Button
+              title="Cancel"
+              onPress={handleCancel}
+            />
+          </View>
+          <Image 
+            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }} 
+            style={styles.imageStyle} 
+            alt="Network Image"
+          />
+          <Image 
+            source={require("D:/learning/code/CS5520/2024Summer2/public/wayvsticker.png")}
+            style={styles.imageStyle} 
+            alt="Local Image"
           />
         </View>
       </View>
@@ -59,21 +90,36 @@ const Input = ({inputHandler, isModalVisible}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalOverlay: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  container: {
+    width: 300,
+    padding: 20,
     backgroundColor: '#fff',
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonStyle: {
-    width: "30%",
-    margin: 5,
+  input: {
+    width: '100%',
+    borderBottomWidth: 1,
+    marginBottom: 10,
+    padding: 5,
   },
-  modalStyle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    transparent: false,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
+  imageStyle: {
+    width: 100,
+    height: 100,
+    margin: 10,
   },
 });
 

@@ -17,6 +17,11 @@ export default function App() {
     setReceivedText(data);
     setModalVisible(false);
   }
+  
+  const handleCancel = () => {
+    console.log("Cancel button pressed");
+    setModalVisible(false);
+  }
 
   return (
     <View style={styles.container}>
@@ -26,7 +31,8 @@ export default function App() {
         {/*<Text>child1</Text>*/}
         {/*<Text>child2</Text>*/}
           <Input inputHandler = {handleInputData} 
-          isModalVisible={modalVisible}/>
+          isModalVisible={modalVisible}
+          onCancel={handleCancel}/>
         <Text style={styles.textStyle}>{receivedText}</Text>
       </View>
       <StatusBar style="auto" />
@@ -51,12 +57,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'blue'
   },
-  topContainer:{
+  /*topContainer:{
     flex: 1,
     backgroundColor: 'coral',
-  },
-  bottomContainer:{
+  },*/
+  /*bottomContainer:{
     flex: 4,
     backgroundColor: 'lightblue',
-  }
+  }*/
 });
