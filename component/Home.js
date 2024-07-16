@@ -1,17 +1,16 @@
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import Header from './Header';
-import React, { useState } from 'react';
 import Input from './Input';
-import GoalItem from './GoalItem'; // Import GoalItem
+import GoalItem from './GoalItem';
 
-export default function Home() {
+export default function Home({ navigation }) {
   const appName = "My awesome app";
   
   const [goals, setGoals] = useState([]); 
   const [modalVisible, setModalVisible] = useState(false); 
 
-  // to receive data add a parameter
   function handleInputData(data){
     console.log("callback fn called with data: ", data);
     const newGoal = { text: data, id: Math.random().toString() };
@@ -20,9 +19,13 @@ export default function Home() {
   }
   
   function handleDeleteGoal(deletedId) {
-    // callback function to delete goal
     console.log("Goal deleted.", deletedId);
     setGoals((currentGoals) => currentGoals.filter(goal => goal.id !== deletedId));
+  }
+
+  function handlePressGoal(goal) {
+    console.log("Goal pressed.");
+    navigation.navigate('GoalDetails', { goal });
   }
 
   const handleCancel = () => {
@@ -53,7 +56,11 @@ export default function Home() {
           <FlatList
             data={goals}
             renderItem={({ item }) => (
-              <GoalItem goal={item} deleteHandler={handleDeleteGoal} />
+              <GoalItem 
+                goal={item} 
+                deleteHandler={handleDeleteGoal} 
+                pressHandler={() => handlePressGoal(item)} 
+              />
             )}
             keyExtractor={(item) => item.id}
           />
