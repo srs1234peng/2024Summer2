@@ -2,14 +2,13 @@ import React from 'react';
 import { Text, View, Button, StyleSheet } from 'react-native';
 
 const GoalItem = ({ goal, deleteHandler, pressHandler }) => {
-  function goalPressed() {
-    pressHandler();
-  }
   return (
     <View style={styles.textContainer}>
       <Text style={styles.textStyle}>{goal.text}</Text>
-      <Button color="black" title="X" onPress={() => deleteHandler(goal.id)} />
-      <Button color="black" title="I" onPress={goalPressed}/>
+      <View style={styles.buttonContainer}>
+        <Button color="black" title="X" onPress={() => deleteHandler(goal.id)} />
+        <Button color="black" title="i" onPress={() => pressHandler(goal)} />
+      </View>
     </View>
   );
 };
@@ -27,6 +26,9 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 20,
     color: 'blue',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
   },
 });
 

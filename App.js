@@ -15,7 +15,7 @@ export default function App() {
           name="Home"
           component={Home}
           options={{
-            title: 'My Awesome App',
+            title: 'All My Goals',
             headerStyle: { backgroundColor: 'darkmagenta' },
             headerTintColor: 'white',
           }}
@@ -25,11 +25,13 @@ export default function App() {
           component={GoalDetails}
           options={({ route }) => ({
             title: route.params.goalObj.text,
+            headerStyle: { backgroundColor: 'darkmagenta' },
+            headerTintColor: 'white',
             headerRight: () => (
               <Button
                 title="Warning"
                 onPress={() => alert('This is a warning message!')}
-                color="blue"
+                color="white"
               />
             ),
           })}

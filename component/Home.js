@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import Header from './Header';
 import Input from './Input';
 import GoalItem from './GoalItem';
+import { StatusBar } from 'expo-status-bar';
 
 export default function Home({ navigation }) {
   const appName = "My awesome app";
@@ -12,24 +12,20 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false); 
 
   function handleInputData(data){
-    console.log("callback fn called with data: ", data);
     const newGoal = { text: data, id: Math.random().toString() };
     setGoals((currentGoals) => [...currentGoals, newGoal]);
     setModalVisible(false);
   }
   
   function handleDeleteGoal(deletedId) {
-    console.log("Goal deleted.", deletedId);
     setGoals((currentGoals) => currentGoals.filter(goal => goal.id !== deletedId));
   }
 
   function handlePressGoal(goal) {
-    console.log("Goal pressed.", goal);
     navigation.navigate('GoalDetails', { goalObj: goal });
   }
 
   const handleCancel = () => {
-    console.log("Cancel button pressed");
     setModalVisible(false);
   }
 
