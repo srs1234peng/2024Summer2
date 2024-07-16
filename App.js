@@ -14,7 +14,7 @@ export default function App() {
       <Stack.Screen name="Home" component={Home} 
       options={{
         title:'My Awesome App', 
-        headerStyle:{backgroundColor:'#4A90E2',},
+        headerStyle:{backgroundColor:'dark purple',},
         headerTintColor: '#fff', // Font color of the header
             headerTitleStyle: {
               fontWeight: 'bold',}

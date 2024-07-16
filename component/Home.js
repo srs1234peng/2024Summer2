@@ -24,7 +24,7 @@ export default function Home({ navigation }) {
   }
 
   function handlePressGoal(goal) {
-    console.log("Goal pressed.");
+    console.log("Goal pressed.", goal);
     navigation.navigate('GoalDetails', { goal });
   }
 
