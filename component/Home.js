@@ -25,7 +25,7 @@ export default function Home({ navigation }) {
 
   function handlePressGoal(goal) {
     console.log("Goal pressed.", goal);
-    navigation.navigate('GoalDetails', { goal });
+    navigation.navigate('GoalDetails', { goalObj: goal });
   }
 
   const handleCancel = () => {
