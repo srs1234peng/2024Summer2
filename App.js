@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './component/Home';
 import GoalDetails from './component/GoalDetails';
+import { getHeaderOptions } from './component/Styles';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,27 +14,12 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={Home}
-          options={{
-            title: 'All My Goals',
-            headerStyle: { backgroundColor: 'darkmagenta' },
-            headerTintColor: 'white',
-          }}
+          options={getHeaderOptions('All My Goals')}
         />
         <Stack.Screen
           name="GoalDetails"
           component={GoalDetails}
-          options={({ route }) => ({
-            title: route.params.goalObj.text,
-            headerStyle: { backgroundColor: 'darkmagenta' },
-            headerTintColor: 'white',
-            headerRight: () => (
-              <Button
-                title="Warning"
-                onPress={() => alert('This is a warning message!')}
-                color="white"
-              />
-            ),
-          })}
+          options={getHeaderOptions('Goal Details')}
         />
       </Stack.Navigator>
     </NavigationContainer>
