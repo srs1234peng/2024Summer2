@@ -21,9 +21,9 @@ export default function Home({ navigation }) {
     setGoals((currentGoals) => currentGoals.filter(goal => goal.id !== deletedId));
   }
 
-  function handlePressGoal(goal) {
-    navigation.navigate('GoalDetails', { goalObj: goal });
-  }
+//  function handlePressGoal(goal) {
+//   navigation.navigate('GoalDetails', { goalObj: goal });
+//  }
 
   const handleCancel = () => {
     setModalVisible(false);
@@ -55,7 +55,8 @@ export default function Home({ navigation }) {
               <GoalItem 
                 goal={item} 
                 deleteHandler={handleDeleteGoal} 
-                pressHandler={() => handlePressGoal(item)} 
+                /*pressHandler={() => handlePressGoal(item) */
+                navigation={navigation} 
               />
             )}
             keyExtractor={(item) => item.id}
