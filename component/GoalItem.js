@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import PressableButton from './PressableButton';
+import { AntDesign } from '@expo/vector-icons';
 
 const GoalItem = ({ goal, deleteHandler, navigation }) => {
   return (
@@ -11,7 +12,7 @@ const GoalItem = ({ goal, deleteHandler, navigation }) => {
           componentStyle={styles.buttonStyle}
           pressedFunction={() => deleteHandler(goal.id)} 
         >
-          X
+          <AntDesign name="delete" size={24} color="black" />
         </PressableButton>
         {/*<PressableButton 
           pressedFunction={() => navigation.navigate('GoalDetails', { goalObj: goal })} 
