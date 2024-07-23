@@ -1,8 +1,8 @@
 import React from "react";
-import Home from "./Components/Home";
+import Home from "./component/Home";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import GoalDetails from "./Components/GoalDetails";
+import GoalDetails from "./component/GoalDetails";
 import { Button, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
