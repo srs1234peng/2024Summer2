@@ -1,53 +1,44 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, Button, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
 
 export default function GoalDetails({ navigation, route }) {
-  const { goalObj } = route.params;
-  const [isWarning, setIsWarning] = useState(false);
+  const [warning, setWarning] = useState(false);
+  function warningHandler() {
+    console.log("warning");
+    setWarning(true);
+    navigation.setOptions({ title: "Warning!" });
+  }
 
-  useLayoutEffect(() => {
+  // waits till the render is done and then run the effect function
+  useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Warning"
-          onPress={() => {
-            setIsWarning(true);
-            navigation.setOptions({ title: 'Warning!' });
-          }}
-          color="white"
-        />
-      ),
+      headerRight: () => {
+        return <Button title="Warning" color="grey" onPress={warningHandler} />;
+      },
     });
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      {goalObj ? (
-        <Text style={[styles.text, isWarning && { color: 'red' }]}>
-          You are seeing the details of {goalObj.text} with id of {goalObj.id}
+    <View>
+      {route.params ? (
+        <Text style={warning && styles.warningStyle}>
+          You are seeing the details of the goal with text :
+          {route.params.goalObj.text} and id:{route.params.goalObj.id}
         </Text>
       ) : (
-        <Text style={styles.text}>More details</Text>
+        <Text>More details</Text>
       )}
       <Button
         title="More details"
-        onPress={() =>
-          navigation.navigate('GoalDetails', { goalObj })
-        }
+        onPress={() => {
+          navigation.push("Details");
+        }}
       />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 24,
-    color: 'black',
+  warningStyle: {
+    color: "red",
   },
 });
