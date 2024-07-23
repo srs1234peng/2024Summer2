@@ -14,8 +14,11 @@ import { useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
+import { writeToDB } from "../Firebase/firestoreHelper";
+import { app } from "../Firebase/firebaseSetup";
 
 export default function Home({ navigation }) {
+  // console.log(app); used for testing
   const appName = "Summer 2024 class";
   // const [receivedText, setReceivedText] = useState("");
   const [goals, setGoals] = useState([]);
@@ -26,12 +29,14 @@ export default function Home({ navigation }) {
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data, id: Math.random() };
+    const newGoal = { text: data };
     //use updater function when updating the state variable based on existing values
     setGoals((currentGoals) => {
       return [...currentGoals, newGoal];
     });
     // add this object to goals array
+    // call addToDB function to write to the database
+    writeToDB(newGoal, "goals");
 
     // setReceivedText(data);
     //hide the modal

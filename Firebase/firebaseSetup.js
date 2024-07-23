@@ -14,7 +14,7 @@ import {
   storageBucket,
   messagingSenderId,
   appId,
-} from "@env";
+} from '@env';
 
 const firebaseConfig = {
     apiKey: apiKey,
@@ -26,5 +26,5 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 export const database = getFirestore(app);
