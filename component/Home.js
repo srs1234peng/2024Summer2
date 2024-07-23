@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
-import { writeToDB } from "../Firebase/firestoreHelper";
+import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { app } from "../Firebase/firebaseSetup";
 import { database } from "../Firebase/firebaseSetup";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -58,12 +58,13 @@ export default function Home({ navigation }) {
   }
 
   function handleDeleteGoal(deletedId) {
+    // setGoals((currentGoals) => {
+    //   return currentGoals.filter((goal) => {
+    //     return goal.id !== deletedId;
+    //   });
+    //});
+    deleteFromDB(deletedId, "goals");
     console.log("goal deleted ", deletedId);
-    setGoals((currentGoals) => {
-      return currentGoals.filter((goal) => {
-        return goal.id !== deletedId;
-      });
-    });
   }
   //   function handlePressGoal(pressedGoal) {
   //     console.log("goal pressed ", pressedGoal);
