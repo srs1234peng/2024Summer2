@@ -1,67 +1,44 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Button, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
 
-const GoalDetails = ({ navigation, route }) => {
-  const { goalObj } = route.params;
-  const [isWarning, setIsWarning] = useState(false);
+export default function GoalDetails({ navigation, route }) {
+  const [warning, setWarning] = useState(false);
+  function warningHandler() {
+    console.log("warning");
+    setWarning(true);
+    navigation.setOptions({ title: "Warning!" });
+  }
+
+  // waits till the render is done and then run the effect function
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return <Button title="Warning" color="grey" onPress={warningHandler} />;
+      },
+    });
+  }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <Pressable
-        android_ripple={{ color: 'red' }}
-        style={({ pressed }) => [
-          {
-            opacity: pressed ? 1 : 0.5,
-            backgroundColor: pressed ? 'lightblue' : 'pink',
-          },
-          styles.pressable,
-        ]}
-        onPress={() => setIsWarning(!isWarning)}
-      >
-        {goalObj ? (
-          <Text style={[styles.text, isWarning && { color: 'red' }]}>
-            You are seeing the details of {goalObj.text} with id of {goalObj.id}
-          </Text>
-        ) : (
-          <Text style={styles.text}>More details</Text>
-        )}
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? 'lightgray' : 'blue',
-          },
-          styles.pressable,
-        ]}
-        onPress={() => navigation.navigate('GoalDetails', { goalObj })}
-      >
-        <Text style={styles.pressableText}>More details</Text>
-      </Pressable>
+    <View>
+      {route.params ? (
+        <Text style={warning && styles.warningStyle}>
+          You are seeing the details of the goal with text :
+          {route.params.goalObj.text} and id:{route.params.goalObj.id}
+        </Text>
+      ) : (
+        <Text>More details</Text>
+      )}
+      <Button
+        title="More details"
+        onPress={() => {
+          navigation.push("Details");
+        }}
+      />
     </View>
   );
-};
-
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 24,
-    color: 'black',
-  },
-  pressable: {
-    padding: 10,
-    margin: 10,
-    alignItems: 'center',
-    opacity: 0.8,
-  },
-  pressableText: {
-    color: 'white',
-    fontSize: 16,
+  warningStyle: {
+    color: "red",
   },
 });
-
-export default GoalDetails;

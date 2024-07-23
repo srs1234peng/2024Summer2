@@ -1,25 +1,47 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './component/Home';
-import GoalDetails from './component/GoalDetails';
-import { getHeaderOptions } from './component/Styles';
+import React from "react";
+import Home from "./Components/Home";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import GoalDetails from "./Components/GoalDetails";
+import { Button, Text } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: "darkmagenta" },
+          headerTintColor: "white",
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={Home}
-          options={getHeaderOptions('All My Goals')}
+          options={{
+            title: "All Goals",
+          }}
         />
         <Stack.Screen
-          name="GoalDetails"
+          name="Details"
           component={GoalDetails}
-          options={getHeaderOptions('Goal Details')}
+          options={({ navigation, route }) => {
+            return {
+              title: route.params ? route.params.goalObj.text : "Details",
+              // headerRight: () => {
+              //   return (
+              //     <Button
+              //       title="Warning"
+              //       color="white"
+              //       onPress={() => {
+              //         console.log("Warning");
+              //       }}
+              //     />
+              //   );
+              // },
+            };
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
