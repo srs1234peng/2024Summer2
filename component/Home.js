@@ -10,28 +10,44 @@ import {
   View,
 } from "react-native";
 import Header from "./Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
+import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
+import { app } from "../Firebase/firebaseSetup";
+import { database } from "../Firebase/firebaseSetup";
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
+  // console.log(app); used for testing
   const appName = "Summer 2024 class";
   // const [receivedText, setReceivedText] = useState("");
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    onSnapshot(collection(database, "goals"), (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const goalsArray = [];
+        querySnapshot.forEach((doc) => {
+        goalsArray.push({...doc.data(), id: doc.id});
+      });
+      setGoals(goalsArray);
+    }
+      })
+  }, [])
+
   //To receive data add a parameter
   function handleInputData(data) {
     console.log("callback fn called with ", data);
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data, id: Math.random() };
+    const newGoal = { text: data };
     //use updater function when updating the state variable based on existing values
-    setGoals((currentGoals) => {
-      return [...currentGoals, newGoal];
-    });
     // add this object to goals array
+    // call addToDB function to write to the database
+    writeToDB(newGoal, "goals");
 
     // setReceivedText(data);
     //hide the modal
@@ -42,12 +58,13 @@ export default function Home({ navigation }) {
   }
 
   function handleDeleteGoal(deletedId) {
+    // setGoals((currentGoals) => {
+    //   return currentGoals.filter((goal) => {
+    //     return goal.id !== deletedId;
+    //   });
+    //});
+    deleteFromDB(deletedId, "goals");
     console.log("goal deleted ", deletedId);
-    setGoals((currentGoals) => {
-      return currentGoals.filter((goal) => {
-        return goal.id !== deletedId;
-      });
-    });
   }
   //   function handlePressGoal(pressedGoal) {
   //     console.log("goal pressed ", pressedGoal);
