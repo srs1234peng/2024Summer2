@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { Text, View, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { writeToDB,readAllDocs } from "../Firebase/firestoreHelper";
 
-const GoalUsers = () => {
+const GoalUsers = (id) => {
 
   const [users, setUsers] = useState([]);
 
@@ -34,7 +34,6 @@ const GoalUsers = () => {
     }
     fetchUserData();
     }, []);
-
 
     return (
         <View>
