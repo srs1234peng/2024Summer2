@@ -1,15 +1,18 @@
-import { View, Text, Button, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
+import { updateDetails } from "../Firebase/firestoreHelper"; // Adjust the path as necessary
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
-  function warningHandler() {
-    console.log("warning");
-    setWarning(true);
-    navigation.setOptions({ title: "Warning!" });
+
+  async function warningHandler() {
+    if (route.params && route.params.goalObj && route.params.goalObj.id) {
+      await updateDetails(route.params.goalObj.id, "goals", { warning: true });
+      setWarning(true);
+      navigation.setOptions({ title: "Warning!" });
+    }
   }
 
-  // waits till the render is done and then run the effect function
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
@@ -22,8 +25,7 @@ export default function GoalDetails({ navigation, route }) {
     <View>
       {route.params ? (
         <Text style={warning && styles.warningStyle}>
-          You are seeing the details of the goal with text :
-          {route.params.goalObj.text} and id:{route.params.goalObj.id}
+          You are seeing the details of the goal with text: {route.params.goalObj.text} and id: {route.params.goalObj.id}
         </Text>
       ) : (
         <Text>More details</Text>
@@ -37,6 +39,7 @@ export default function GoalDetails({ navigation, route }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   warningStyle: {
     color: "red",
