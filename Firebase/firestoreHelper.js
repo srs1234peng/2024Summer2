@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
 import { database } from './firebaseSetup';
 
 export async function writeToDB(data, collectionName) {
@@ -30,7 +30,7 @@ export async function readAllDocs(collectionName){
         const querySnapshot = await getDocs(collection(database, collectionName));
         let newArray = [];
         querySnapshot.forEach((doc) => {
-            newArray.push({ ...doc.data(), id: docSnapShot.id });
+            newArray.push(doc.data());
         });}
         catch(err){
             console.error(err);

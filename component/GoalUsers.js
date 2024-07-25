@@ -2,8 +2,9 @@ import { Text, View, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import { writeToDB,readAllDocs } from "../Firebase/firestoreHelper";
 
-const GoalUsers = (id) => {
 
+const GoalUsers = ({id}) => {
+console.log(id)
   const [users, setUsers] = useState([]);
 
     useEffect(() => { 
@@ -26,6 +27,8 @@ const GoalUsers = (id) => {
                 data.forEach((userData) => {
                   // call writeToDB function to write to the database using user id
                   writeToDB(userData, `goals/${id}/users`);
+                  console.log(userData);
+
                 });
                 setUsers(data);
             } catch (err) {
