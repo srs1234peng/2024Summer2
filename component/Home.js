@@ -133,6 +133,16 @@ export default function Home({ navigation }) {
           // </ScrollView>
         )}
       </View>
+      {/* <View>
+        <Button
+          title="Go to Sign In"
+          onPress={() => navigation.navigate("LogIn")}
+        />
+      <Button
+        title="Go to Sign Up"
+        onPress={() => navigation.navigate('SignUp')}
+      />
+    </View> */}
       <StatusBar style="auto" />
     </SafeAreaView>
   );

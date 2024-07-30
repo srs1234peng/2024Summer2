@@ -1,10 +1,10 @@
-import { addDoc, collection, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
 import { database } from './firebaseSetup';
 
 export async function writeToDB(data, collectionName) {
     try {
         await addDoc(collection(database, collectionName), data);
-    } catch (err) {   
+    } catch (err) {
         console.error(err);
     }
 }
@@ -23,4 +23,16 @@ export async function updateDetails(docId, collectionName, data) {
     } catch (err) {
         console.error(err);
     }
+}
+
+export async function readAllDocs(collectionName){
+    try {
+        const querySnapshot = await getDocs(collection(database, collectionName));
+        let newArray = [];
+        querySnapshot.forEach((doc) => {
+            newArray.push(doc.data());
+        });}
+        catch(err){
+            console.error(err);
+        }
 }
