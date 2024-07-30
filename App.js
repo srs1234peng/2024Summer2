@@ -8,7 +8,7 @@ import Home from "./component/Home";
 import GoalDetails from "./component/GoalDetails";
 import SignUp from "./component/SignUp";
 import LogIn from "./component/LogIn";
-import Profile from "./component/Profile";
+import Profile from "./component/Profile"; // Import Profile component
 import { AntDesign } from '@expo/vector-icons'; // Import icons
 
 const Stack = createNativeStackNavigator();
@@ -20,7 +20,7 @@ const AuthStack = (
   </>
 );
 
-const AppStack = (
+const AppStack = (setIsAuthenticated) => (
   <>
     <Stack.Screen
       name="Home"
@@ -29,7 +29,7 @@ const AppStack = (
         title: "All Goals",
         headerRight: () => (
           <Button
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('Profile', { setIsAuthenticated })}
             title="Profile"
             color="darkmagenta"
           />
@@ -46,14 +46,14 @@ const AppStack = (
     <Stack.Screen
       name="Profile"
       component={Profile}
-      options={({ navigation }) => ({
+      options={({ navigation, route }) => ({
         title: "Profile",
         headerRight: () => (
           <Pressable
             onPress={() => {
               signOut(auth).then(() => {
                 // Sign-out successful.
-                setIsAuthenticated(false);
+                route.params.setIsAuthenticated(false);
               }).catch((error) => {
                 // An error happened.
                 console.error(error);
@@ -88,7 +88,7 @@ export default function App() {
           headerTintColor: "white",
         }}
       >
-        {isAuthenticated ? AppStack : AuthStack}
+        {isAuthenticated ? AppStack(setIsAuthenticated) : AuthStack}
       </Stack.Navigator>
     </NavigationContainer>
   );
