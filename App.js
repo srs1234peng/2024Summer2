@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Button, Pressable } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./Firebase/firebaseSetup";
 import Home from "./component/Home";
 import GoalDetails from "./component/GoalDetails";
 import SignUp from "./component/SignUp";
 import LogIn from "./component/LogIn";
-import Profile from "./component/Profile"; // Import Profile component
+import Profile from "./component/Profile";
+import { AntDesign } from '@expo/vector-icons'; // Import icons
 
 const Stack = createNativeStackNavigator();
 
@@ -45,14 +46,25 @@ const AppStack = (
     <Stack.Screen
       name="Profile"
       component={Profile}
-      // options={{ headerRight: () =>{
-      //   return (
-      //     <PressableButton pressedFunction={}>
-      //       <AntDesign name="logout" size={24} color="black" />
-      //     </PressableButton>
-      //   );
-      // } }}
-  
+      options={({ navigation }) => ({
+        title: "Profile",
+        headerRight: () => (
+          <Pressable
+            onPress={() => {
+              signOut(auth).then(() => {
+                // Sign-out successful.
+                setIsAuthenticated(false);
+              }).catch((error) => {
+                // An error happened.
+                console.error(error);
+              });
+            }}
+            style={{ marginRight: 10 }}
+          >
+            <AntDesign name="logout" size={24} color="black" />
+          </Pressable>
+        ),
+      })}
     />
   </>
 );
@@ -62,9 +74,7 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if(user)
-      setIsAuthenticated(true);
-      console.log("Authenticated");
+      setIsAuthenticated(!!user);
     });
 
     return () => unsubscribe();
@@ -78,7 +88,7 @@ export default function App() {
           headerTintColor: "white",
         }}
       >
-        {isAuthenticated ? AppStack: AuthStack}
+        {isAuthenticated ? AppStack : AuthStack}
       </Stack.Navigator>
     </NavigationContainer>
   );
