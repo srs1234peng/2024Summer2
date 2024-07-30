@@ -12,12 +12,11 @@ const LogIn = ({ navigation }) => {
       Alert.alert("Error", "Email and password are required");
       return;
     }
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "User logged in successfully");
-      navigation.navigate("Home");
-    } catch (error) {
+      // The isAuthenticated state in App.js will be updated by onAuthStateChanged listener
+     } catch (error) {
       Alert.alert("Error", error.message);
     }
   };
@@ -38,6 +37,7 @@ const LogIn = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
+      <Button title="Sign Up" onPress={() => navigation.replace("SignUp")} />
       <Button title="Log In" onPress={handleLogIn} />
     </View>
   );
