@@ -46,11 +46,11 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="sign up"
+          name="SignUp"
           component={SignUp}
         />
         <Stack.Screen
-          name="log in"
+          name="LogIn"
           component={LogIn}/>
       </Stack.Navigator>
     </NavigationContainer>
