@@ -1,9 +1,10 @@
 import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
-import { database } from './firebaseSetup';
+import { database, auth } from './firebaseSetup';
 
 export async function writeToDB(data, collectionName) {
+    const updatedData = { ...data, owner: auth.currentUser.uid };
     try {
-        await addDoc(collection(database, collectionName), data);
+        await addDoc(collection(database, collectionName), updatedData);
     } catch (err) {
         console.error(err);
     }

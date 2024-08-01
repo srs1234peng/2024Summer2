@@ -16,8 +16,8 @@ import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { app } from "../Firebase/firebaseSetup";
-import { database } from "../Firebase/firebaseSetup";
-import { collection, onSnapshot } from "firebase/firestore";
+import { auth, database } from "../Firebase/firebaseSetup";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -26,15 +26,19 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const goalsArray = [];
+    const unsubscribe = onSnapshot(
+      query(
+        collection(database, "goals"), 
+        where("owner", "==", auth.currentUser.uid)
+    ),
+      (querySnapshot) => {
+        let newArray = [];
         querySnapshot.forEach((doc) => {
-          goalsArray.push({ ...doc.data(), id: doc.id });
+          newArray.push({ ...doc.data(), id: doc.id });
         });
-        setGoals(goalsArray);
+        setGoals(newArray);
       }
-    });
+    );
 
     return () => {
       unsubscribe();
