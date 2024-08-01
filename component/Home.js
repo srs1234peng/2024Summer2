@@ -16,8 +16,8 @@ import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { app } from "../Firebase/firebaseSetup";
-import { database } from "../Firebase/firebaseSetup";
-import { collection, onSnapshot } from "firebase/firestore";
+import { auth, database } from "../Firebase/firebaseSetup";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -26,15 +26,19 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const goalsArray = [];
+    const unsubscribe = onSnapshot(
+      query(
+        collection(database, "goals"), 
+        where("owner", "==", auth.currentUser.uid)
+    ),
+      (querySnapshot) => {
+        let newArray = [];
         querySnapshot.forEach((doc) => {
-          goalsArray.push({ ...doc.data(), id: doc.id });
+          newArray.push({ ...doc.data(), id: doc.id });
         });
-        setGoals(goalsArray);
+        setGoals(newArray);
       }
-    });
+    );
 
     return () => {
       unsubscribe();
@@ -47,7 +51,7 @@ export default function Home({ navigation }) {
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data };
+    const newGoal = { text: data.text, owner: auth.currentUser.uid };
     //use updater function when updating the state variable based on existing values
     // add this object to goals array
     // call addToDB function to write to the database
@@ -133,6 +137,16 @@ export default function Home({ navigation }) {
           // </ScrollView>
         )}
       </View>
+      {/* <View>
+        <Button
+          title="Go to Sign In"
+          onPress={() => navigation.navigate("LogIn")}
+        />
+      <Button
+        title="Go to Sign Up"
+        onPress={() => navigation.navigate('SignUp')}
+      />
+    </View> */}
       <StatusBar style="auto" />
     </SafeAreaView>
   );

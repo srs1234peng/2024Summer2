@@ -1,18 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Text, TextInput, View, Button, Modal, StyleSheet, Image } from "react-native";
+import ImageManager from "./ImageManager";
 
 const Input = ({ inputHandler, isModalVisible, onCancel }) => {
   const [text, setText] = useState("");
   const [thankYouVisible, setThankYouVisible] = useState(false);
   const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
   const inputRef = useRef(null);
+  const [imageUri, setImageUri] = useState(null);
 
   const handleConfirm = () => {
     console.log("User typed ", text);
-    inputHandler(text);
+    inputHandler({text, imageUri});
     setText(""); // Clear the input after confirming
     setThankYouVisible(false);
     setIsConfirmDisabled(true);
+  };
+
+
+  function ImageUriHandler(uri){
+    console.log("ImageUriHandler called with ", uri);
+    setImage(uri);
   };
 
   const handleCancel = () => {
@@ -60,6 +68,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
             onBlur={handleBlur}
             style={styles.input}
           />
+          <ImageManager ImageUri={ImageUriHandler}/>
           <Text>You typed: {text}</Text>
           {thankYouVisible && <Text>Thank you</Text>}
           <View style={styles.buttonContainer}>
