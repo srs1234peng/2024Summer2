@@ -51,7 +51,7 @@ export default function Home({ navigation }) {
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data };
+    const newGoal = { text: data.text, owner: auth.currentUser.uid };
     //use updater function when updating the state variable based on existing values
     // add this object to goals array
     // call addToDB function to write to the database

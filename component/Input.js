@@ -7,6 +7,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
   const [thankYouVisible, setThankYouVisible] = useState(false);
   const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
   const inputRef = useRef(null);
+  const [imageUri, setImageUri] = useState(null);
 
   const handleConfirm = () => {
     console.log("User typed ", text);
@@ -14,6 +15,12 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
     setText(""); // Clear the input after confirming
     setThankYouVisible(false);
     setIsConfirmDisabled(true);
+  };
+
+
+  function ImageUriHandler(uri){
+    console.log("ImageUriHandler called with ", uri);
+    setImageUri(uri);
   };
 
   const handleCancel = () => {
@@ -61,7 +68,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
             onBlur={handleBlur}
             style={styles.input}
           />
-          <ImageManager />
+          <ImageManager ImageUri={ImageUriHandler}/>
           <Text>You typed: {text}</Text>
           {thankYouVisible && <Text>Thank you</Text>}
           <View style={styles.buttonContainer}>
