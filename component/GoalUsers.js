@@ -11,7 +11,7 @@ console.log(id)
         async function fetchUserData() {
             try {
               // before fetching, check if this user data exists in the database
-                const dataFromDB = readAllDocs(`goals/${id}/users`);
+                const dataFromDB = await readAllDocs(`goals/${id}/users`);
                 if (dataFromDB.length) {
                     setUsers(dataFromDB);
                     return;

@@ -11,7 +11,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
 
   const handleConfirm = () => {
     console.log("User typed ", text);
-    inputHandler(text);
+    inputHandler({text, imageUri});
     setText(""); // Clear the input after confirming
     setThankYouVisible(false);
     setIsConfirmDisabled(true);
@@ -20,7 +20,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
 
   function ImageUriHandler(uri){
     console.log("ImageUriHandler called with ", uri);
-    setImageUri(uri);
+    setImage(uri);
   };
 
   const handleCancel = () => {

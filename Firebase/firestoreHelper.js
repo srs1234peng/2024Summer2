@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs, query, where } from 'firebase/firestore';
 import { database, auth } from './firebaseSetup';
 
 export async function writeToDB(data, collectionName) {
@@ -28,15 +28,16 @@ export async function updateDetails(docId, collectionName, data) {
 
 export async function readAllDocs(collectionName){
     try {
-        const querySnapshot = await getDocs(collection(database, collectionName));
-        query(
-            collection(database, collectionName),
+        const querySnapshot = await getDocs(
+            query(collection(database, collectionName),
             where("owner", "==", auth.currentUser.uid)
-        );
+        ));
         let newArray = [];
         querySnapshot.forEach((doc) => {
             newArray.push(doc.data());
-        });}
+        });
+        return newArray;
+    }
         catch(err){
             console.error(err);
         }
