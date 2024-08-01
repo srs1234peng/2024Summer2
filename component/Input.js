@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Text, TextInput, View, Button, Modal, StyleSheet, Image } from "react-native";
+import ImageManager from "./ImageManager";
 
 const Input = ({ inputHandler, isModalVisible, onCancel }) => {
   const [text, setText] = useState("");
@@ -60,6 +61,7 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
             onBlur={handleBlur}
             style={styles.input}
           />
+          <ImageManager />
           <Text>You typed: {text}</Text>
           {thankYouVisible && <Text>Thank you</Text>}
           <View style={styles.buttonContainer}>

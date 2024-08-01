@@ -29,6 +29,10 @@ export async function updateDetails(docId, collectionName, data) {
 export async function readAllDocs(collectionName){
     try {
         const querySnapshot = await getDocs(collection(database, collectionName));
+        query(
+            collection(database, collectionName),
+            where("owner", "==", auth.currentUser.uid)
+        );
         let newArray = [];
         querySnapshot.forEach((doc) => {
             newArray.push(doc.data());
