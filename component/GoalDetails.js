@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { updateDetails } from "../Firebase/firestoreHelper"; // Adjust the path as necessary
+import { updateDetails } from "../Firebase/firestoreHelper";
+import { getDownloadURL, ref } from "firebase/storage";
+import GoalUsers from "./GoalUsers";
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
 
-  async function warningHandler() {
-    if (route.params && route.params.goalObj && route.params.goalObj.id) {
-      await updateDetails(route.params.goalObj.id, "goals", { warning: true });
-      setWarning(true);
-      navigation.setOptions({ title: "Warning!" });
-    }
+  function warningHandler() {
+    console.log("warning");
+    setWarning(!warning);
+    navigation.setOptions({ title: "Warning!" });
   }
+  useEffect(() => {
+    async function getImageUrl() {
+      if (route.params) {
+        const reference = ref(storage, goal.imageUri);
+        const url = await getDownloadURL(reference);
+        console.log("url", url);
+      }
+    }
+    getImageUrl();
+  }, [route.params]); 
 
   useEffect(() => {
     navigation.setOptions({
@@ -36,6 +46,9 @@ export default function GoalDetails({ navigation, route }) {
           navigation.push("Details");
         }}
       />
+      {route.params && route.params.goalObj && (
+        <GoalUsers id={route.params.goalObj.id} />
+      )}
     </View>
   );
 }
