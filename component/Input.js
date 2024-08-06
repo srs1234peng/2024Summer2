@@ -1,97 +1,83 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Text, TextInput, View, Button, Modal, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Modal,
+  StyleSheet,
+  Image,
+} from "react-native";
+import React, { useState } from "react";
 import ImageManager from "./ImageManager";
 
-const Input = ({ inputHandler, isModalVisible, onCancel }) => {
-  const [text, setText] = useState("");
-  const [thankYouVisible, setThankYouVisible] = useState(false);
-  const [isConfirmDisabled, setIsConfirmDisabled] = useState(true);
-  const inputRef = useRef(null);
-  const [imageUri, setImageUri] = useState(null);
-
-  const handleConfirm = () => {
-    console.log("User typed ", text);
-    inputHandler({text, imageUri});
-    setText(""); // Clear the input after confirming
-    setThankYouVisible(false);
-    setIsConfirmDisabled(true);
-  };
-
-
-  function ImageUriHandler(uri){
-    console.log("ImageUriHandler called with ", uri);
-    setImage(uri);
-  };
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    }
-    setText(""); // Clear the input after canceling
-    setThankYouVisible(false);
-    setIsConfirmDisabled(true);
-  };
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus(); // focus the TextInput
-    }
-  }, [isModalVisible]);
-
-  const handleFocus = () => {
-    console.log("Input focused");
-    setThankYouVisible(false); // Hide "Thank you" text when input is focused
-  };
-
-  const handleBlur = () => {
-    console.log("Input blurred with text:", text);
-    setThankYouVisible(true); // Show "Thank you" text when input loses focus
-  };
-
-  const handleChangeText = (newText) => {
-    console.log("Text changed to:", newText);
-    setText(newText);
-    setThankYouVisible(false); // Hide "Thank you" text when user starts typing
-    setIsConfirmDisabled(newText.trim() === ""); // Disable confirm button if text is empty
-  };
-
+//update Input to receive a prop
+const Input = ({ inputHandler, isModalVisible, dismissModal }) => {
+  const [text, setText] = useState(""); //source of truth for textinput
+  const [blur, setBlur] = useState(false);
+  const [imageUri, setImageUri] = useState("");
+  function handleConfirm() {
+    console.log("user typed ", text);
+    //call the received prop callback fn
+    // send the image uri as well as the text
+    inputHandler({ text, imageUri });
+    setText("");
+  }
+  function handleCancel() {
+    // hide the modal
+    dismissModal();
+    setText("");
+  }
+  function imageUriHandler(uri) {
+    console.log("input ", uri);
+    setImageUri(uri);
+  }
   return (
     <Modal animationType="slide" visible={isModalVisible} transparent={true}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.modalView}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png",
+            }}
+            style={styles.image}
+          />
+          <Image source={require("../assets/icon.png")} style={styles.image} />
+
           <TextInput
-            ref={inputRef}
-            placeholder="Type here"
-            value={text}
-            onChangeText={handleChangeText}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
             style={styles.input}
+            autoFocus={true}
+            value={text}
+            onChangeText={function (changedText) {
+              // console.log("changed :", changedText);
+              setText(changedText);
+              //this is not updated! setText is asynchronous and will be done in the next render
+              // console.log("text ", text);
+            }}
+            onBlur={() => {
+              setBlur(true);
+            }}
+            onFocus={() => {
+              setBlur(false);
+            }}
+            placeholder="Type something"
+            autoCapitalize={true}
           />
-          <ImageManager ImageUri={ImageUriHandler}/>
-          <Text>You typed: {text}</Text>
-          {thankYouVisible && <Text>Thank you</Text>}
-          <View style={styles.buttonContainer}>
-            <Button
-              title="Confirm"
-              onPress={handleConfirm}
-              disabled={isConfirmDisabled}
-            />
-            <Button
-              title="Cancel"
-              onPress={handleCancel}
-            />
+          {blur && <Text>Thank you</Text>}
+          <ImageManager imageUriHandler={imageUriHandler} />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.buttonView}>
+              <Button title="Cancel" onPress={handleCancel} />
+            </View>
+            <View style={styles.buttonStyle}>
+              <Button
+                disabled={!text}
+                title="Confirm"
+                onPress={() => {
+                  handleConfirm();
+                }}
+              />
+            </View>
           </View>
-          <Image 
-            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }} 
-            style={styles.imageStyle} 
-            alt="Network Image"
-          />
-          <Image 
-            source={require('../public/wayvsticker.png')} 
-            style={styles.imageStyle} 
-            alt="Local Image"
-          />
         </View>
       </View>
     </Modal>
@@ -99,38 +85,33 @@ const Input = ({ inputHandler, isModalVisible, onCancel }) => {
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: 'grey',
-  },
   container: {
-    width: 300,
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
+    // backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonStyle: {
+    width: "30%",
+    margin: 5,
+  },
+  buttonsContainer: { flexDirection: "row", alignItems: "center" },
+
+  modalView: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 20,
+    padding: "10%",
+    alignItems: "center",
   },
   input: {
-    width: '100%',
-    borderBottomWidth: 1,
-    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "purple",
+    width: "50%",
     padding: 5,
+    color: "dodgerblue",
+    marginVertical: 10,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 20,
-  },
-  imageStyle: {
-    width: 100,
-    height: 100,
-    margin: 10,
-  },
+  image: { width: 100, height: 100 },
 });
 
 export default Input;

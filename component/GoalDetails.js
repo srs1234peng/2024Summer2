@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { updateDetails } from "../Firebase/firestoreHelper"; // Adjust the path as necessary
+import { updateDetails } from "../Firebase/firestoreHelper";
+import { getDownloadURL, ref } from "firebase/storage";
 import GoalUsers from "./GoalUsers";
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
 
-  async function warningHandler() {
-    if (route.params && route.params.goalObj && route.params.goalObj.id) {
-      await updateDetails(route.params.goalObj.id, "goals", { warning: true });
-      setWarning(true);
-      navigation.setOptions({ title: "Warning!" });
-    }
+  function warningHandler() {
+    console.log("warning");
+    setWarning(!warning);
+    navigation.setOptions({ title: "Warning!" });
   }
+  useEffect(() => {
+    async function getImageUrl() {
+      if (route.params) {
+        const imageUrl = await getImage(route.params.goalObj.id);
+        // Do something with the imageUrl, e.g., set it in the state or ref
+        const imageRef = ref(storage, imageUrl);
+        // If you need to use the imageRef further, you can add your logic here
+      }
+    }
+    getImageUrl();
+  }, [route.params]); 
 
   useEffect(() => {
     navigation.setOptions({

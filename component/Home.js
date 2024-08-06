@@ -53,7 +53,6 @@ export default function Home({ navigation }) {
       // uploadImage(data.imageUrl);
       imageUrl = retrieveUploadImage(data.imageUrl);
     }
-
     async function retrieveUploadImage(uri){
       try{
       const response = await fetch(uri);
@@ -67,6 +66,7 @@ export default function Home({ navigation }) {
       const imageRef = await ref(storage, `images/${imageName}`)
       const uploadResult = await uploadBytesResumable(imageRef, imageBlob);
       console.log("uploadResult", uploadResult.metadata.fullPath);
+      return uploadResult.metadata.fullPath;
     }catch(err){
       console.log("retrieve and upload image error", err);
     };
