@@ -15,10 +15,9 @@ export default function GoalDetails({ navigation, route }) {
   useEffect(() => {
     async function getImageUrl() {
       if (route.params) {
-        const imageUrl = await getImage(route.params.goalObj.id);
-        // Do something with the imageUrl, e.g., set it in the state or ref
-        const imageRef = ref(storage, imageUrl);
-        // If you need to use the imageRef further, you can add your logic here
+        const reference = ref(storage, goal.imageUri);
+        const url = await getDownloadURL(reference);
+        console.log("url", url);
       }
     }
     getImageUrl();

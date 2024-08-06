@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import ImageManager from "./ImageManager";
+import LocationManager from "./LocationManager";
 
 //update Input to receive a prop
 const Input = ({ inputHandler, isModalVisible, dismissModal }) => {
@@ -64,6 +65,7 @@ const Input = ({ inputHandler, isModalVisible, dismissModal }) => {
           />
           {blur && <Text>Thank you</Text>}
           <ImageManager imageUriHandler={imageUriHandler} />
+          <LocationManager />
           <View style={styles.buttonsContainer}>
             <View style={styles.buttonView}>
               <Button title="Cancel" onPress={handleCancel} />
