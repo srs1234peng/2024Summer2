@@ -28,17 +28,15 @@ export async function updateDetails(docId, collectionName, data) {
 
 export async function readAllDocs(collectionName){
     try {
-        const querySnapshot = await getDocs(
-            query(collection(database, collectionName),
-            where("owner", "==", auth.currentUser.uid)
-        ));
+        const querySnapshot = await getDocs(collection(database, collectionName));
         let newArray = [];
-        querySnapshot.forEach((doc) => {
-            newArray.push(doc.data());
-        });
-        return newArray;
-    }
-        catch(err){
-            console.error(err);
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((docSnapshot) => {
+            newArray.push(docSnapshot.data());
+          });
         }
+        return newArray;
+      } catch (err) {
+        console.log(err);
+      }
 }

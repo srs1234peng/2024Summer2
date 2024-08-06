@@ -48,6 +48,30 @@ export default function Home({ navigation }) {
   //To receive data add a parameter
   function handleInputData(data) {
     console.log("callback fn called with ", data);
+    // if the data contains image url, call the function to upload the image
+    if (data.imageUrl) {
+      // uploadImage(data.imageUrl);
+      imageUrl = retrieveUploadImage(data.imageUrl);
+    }
+
+    async function retrieveUploadImage(uri){
+      try{
+      const response = await fetch(uri);
+      console.log("response", response);
+      if (!response.ok) {
+        console.error("The request was not successful");
+      }
+      const blob = await response.blob();
+      console.log("blob", blob);
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = await ref(storage, `images/${imageName}`)
+      const uploadResult = await uploadBytesResumable(imageRef, imageBlob);
+      console.log("uploadResult", uploadResult.metadata.fullPath);
+    }catch(err){
+      console.log("retrieve and upload image error", err);
+    };
+    }
+
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
