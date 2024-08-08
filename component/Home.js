@@ -16,8 +16,10 @@ import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { app } from "../Firebase/firebaseSetup";
-import { database } from "../Firebase/firebaseSetup";
-import { collection, onSnapshot } from "firebase/firestore";
+import { auth, database } from "../Firebase/firebaseSetup";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../Firebase/firebaseSetup";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -26,15 +28,19 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const goalsArray = [];
+    const unsubscribe = onSnapshot(
+      query(
+        collection(database, "goals"), 
+        where("owner", "==", auth.currentUser.uid)
+    ),
+      (querySnapshot) => {
+        let newArray = [];
         querySnapshot.forEach((doc) => {
-          goalsArray.push({ ...doc.data(), id: doc.id });
+          newArray.push({ ...doc.data(), id: doc.id });
         });
-        setGoals(goalsArray);
+        setGoals(newArray);
       }
-    });
+    );
 
     return () => {
       unsubscribe();
@@ -44,15 +50,40 @@ export default function Home({ navigation }) {
   //To receive data add a parameter
   function handleInputData(data) {
     console.log("callback fn called with ", data);
+    // if the data contains image url, call the function to upload the image
+    async function retrieveUploadImage(uri){
+      try{
+      const response = await fetch(uri);
+      console.log("response", response);
+      if (!response.ok) {
+        console.error("The request was not successful");
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `images/${imageName}`)
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+
+      console.log("uploaded image", uploadResult.metadata.fullPath);
+      const newGoal = { text: data.text, owner: auth.currentUser.uid, uri: uploadResult.metadata.fullPath};
+      writeToDB(newGoal, "goals");
+    }catch(err){
+      console.log("retrieve and upload image error", err);
+    };
+    }
+
+    let imageUri = "";
+    if (data.imageUri) {
+      // uploadImage(data.imageUrl);
+      imageUri = retrieveUploadImage(data.imageUri);
+    }
+  
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data };
+    retrieveUploadImage(imageUri);
     //use updater function when updating the state variable based on existing values
     // add this object to goals array
     // call addToDB function to write to the database
-    writeToDB(newGoal, "goals");
-
     // setReceivedText(data);
     //hide the modal
     setModalVisible(false);
@@ -133,6 +164,16 @@ export default function Home({ navigation }) {
           // </ScrollView>
         )}
       </View>
+      {/* <View>
+        <Button
+          title="Go to Sign In"
+          onPress={() => navigation.navigate("LogIn")}
+        />
+      <Button
+        title="Go to Sign Up"
+        onPress={() => navigation.navigate('SignUp')}
+      />
+    </View> */}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
