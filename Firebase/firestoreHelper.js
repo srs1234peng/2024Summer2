@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs, query, where, setDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, deleteDoc, updateDoc, getDocs, query, where, setDoc, getDoc } from 'firebase/firestore';
 import { database, auth } from './firebaseSetup';
 
 export async function writeToDB(data, collectionName) {
@@ -51,7 +51,7 @@ export async function writeWithIdToDB(data, collectionName,id){
 
 export async function getADoc(collectionName, id){
     try {
-        const docSnap = await getDoc(userDocRef);
+        const docSnap = await getDoc(doc(database, collectionName, id));
         if (docSnap.exists()) {
           return docSnap.data();
         } else {

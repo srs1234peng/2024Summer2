@@ -7,18 +7,19 @@ import { storage } from "../Firebase/firebaseSetup";
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
   const [imageUri, setImageUri] = useState("");
+
   function warningHandler() {
     console.log("warning");
     setWarning(true);
     navigation.setOptions({ title: "Warning!" });
   }
+
   useEffect(() => {
     async function getImageUrl() {
-      if (route.params) {
+      if (route.params && route.params.goalObj.imageUri) {
         try {
-          const url = await getDownloadURL(
-            ref(storage, route.params.goalObj.imageUri)
-          );
+          const imageRef = ref(storage, route.params.goalObj.imageUri);
+          const url = await getDownloadURL(imageRef);
           console.log(url);
           setImageUri(url);
         } catch (err) {
@@ -27,7 +28,8 @@ export default function GoalDetails({ navigation, route }) {
       }
     }
     getImageUrl();
-  }, []);
+  }, [route.params]);
+
   // waits till the render is done and then run the effect function
   useEffect(() => {
     navigation.setOptions({
@@ -67,6 +69,7 @@ export default function GoalDetails({ navigation, route }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   warningStyle: {
     color: "red",

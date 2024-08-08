@@ -65,7 +65,6 @@ const Input = ({ inputHandler, isModalVisible, dismissModal }) => {
           />
           {blur && <Text>Thank you</Text>}
           <ImageManager imageUriHandler={imageUriHandler} />
-          <LocationManager />
           <View style={styles.buttonsContainer}>
             <View style={styles.buttonView}>
               <Button title="Cancel" onPress={handleCancel} />

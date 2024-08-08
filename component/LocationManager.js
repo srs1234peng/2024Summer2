@@ -3,7 +3,7 @@ import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { MAPS_API_KEY } from "@env"; // Ensure you are using the correct environment variable name
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { writeWithIdToDB, getUserData } from "../Firebase/firestoreHelper";
+import { writeWithIdToDB, getADoc } from "../Firebase/firestoreHelper";
 import { auth } from "../Firebase/firebaseSetup";
 
 const LocationManager = () => {
@@ -17,7 +17,7 @@ const LocationManager = () => {
       setLocation(route.params);
       console.log("Location set from route:", route.params);
     }
-  }, []);
+  }, [route.params]);
 
   useEffect(() => {
     async function getUserData() {
@@ -26,6 +26,7 @@ const LocationManager = () => {
         setLocation(userData.location);
       }
   }
+  getUserData();
   }, []);
 
   async function verifyPermission() {
