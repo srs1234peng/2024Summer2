@@ -64,7 +64,7 @@ export default function Home({ navigation }) {
       const uploadResult = await uploadBytesResumable(imageRef, blob);
 
       console.log("uploaded image", uploadResult.metadata.fullPath);
-      const newGoal = { text: data.text, owner: auth.currentUser.uid, uri: uri};
+      const newGoal = { text: data.text, owner: auth.currentUser.uid, uri: uploadResult.metadata.fullPath};
       writeToDB(newGoal, "goals");
     }catch(err){
       console.log("retrieve and upload image error", err);
