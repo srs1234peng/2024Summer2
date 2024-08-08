@@ -9,7 +9,9 @@ import GoalDetails from "./component/GoalDetails";
 import SignUp from "./component/SignUp";
 import LogIn from "./component/LogIn";
 import Profile from "./component/Profile"; // Import Profile component
+import Map from "./component/Map"; // Import Map component
 import { AntDesign } from '@expo/vector-icons'; // Import icons
+import LocationManager from "./component/LocationManager";
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +68,7 @@ const AppStack = (setIsAuthenticated) => (
         ),
       })}
     />
+    <Stack.Screen name="Map" component={Map} />
   </>
 );
 

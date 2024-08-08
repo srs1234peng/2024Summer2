@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { auth } from "../Firebase/firebaseSetup";
+import LocationManager from "./LocationManager";
 
 const Profile = () => {
   const user = auth.currentUser;
@@ -11,6 +12,7 @@ const Profile = () => {
         <>
           <Text style={styles.text}>Email: {user.email}</Text>
           <Text style={styles.text}>UID: {user.uid}</Text>
+          <LocationManager />
         </>
       ) : (
         <Text style={styles.text}>No user is currently logged in.</Text>

@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Button, StyleSheet, View, Alert, Text, Image } from "react-native";
 import * as Location from "expo-location";
 import { MAPS_API_KEY } from "@env"; // Ensure you are using the correct environment variable name
+import { useNavigation } from "@react-navigation/native";
 
 const LocationManager = () => {
   const [location, setLocation] = useState(null);
   const [permissionResponse, requestPermission] = Location.useForegroundPermissions();
+  const navigation = useNavigation();
 
   async function verifyPermission() {
     console.log(permissionResponse);
@@ -41,6 +43,19 @@ const LocationManager = () => {
     console.log(`https://maps.googleapis.com/maps/api/staticmap?center=${location.latitude},${location.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location.latitude},${location.longitude}&key=${MAPS_API_KEY}`);  
   };
 
+  function chooseLocationHandler() {
+    if (location) {
+      navigation.navigate('Map', {
+        initialRegion: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+      });
+    } else {
+      Alert.alert("No Location", "Please locate your position first.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Button title="Locate Me" onPress={locateUserHandler} />
@@ -53,6 +68,8 @@ const LocationManager = () => {
             style={styles.mapImage}
             source={{ uri: generateMapUrl() }}
           />
+          <Button title="Display Map" onPress={()=>{navigation.navigate("Map")}} />
+          
         </>
       )}
     </View>
