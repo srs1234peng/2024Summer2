@@ -1,58 +1,52 @@
-import { Text, View, FlatList } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { writeToDB,readAllDocs } from "../Firebase/firestoreHelper";
+import { readAllDocs, writeToDB } from "../Firebase/firestoreHelper";
 
-
-const GoalUsers = ({id}) => {
-console.log(id)
+const GoalUsers = ({ id }) => {
   const [users, setUsers] = useState([]);
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        //before fetching, check if this user data exists in firestore
+        const dataFromFirestore = await readAllDocs(`goals/${id}/users`);
+        // console.log(dataFromFirestore.length);
+        if (dataFromFirestore.length) {
+          setUsers(dataFromFirestore);
+          return;
+        }
 
-    useEffect(() => { 
-        async function fetchUserData() {
-            try {
-              // before fetching, check if this user data exists in the database
-                const dataFromDB = await readAllDocs(`goals/${id}/users`);
-                if (dataFromDB.length) {
-                    setUsers(dataFromDB);
-                    return;
-                  }
-                const response = await fetch(
-                    "https://jsonplaceholder.typicode.com/users");
-                console.log(response);
-                if (!response.ok) {
-                    throw new Error("The request was not successful");
-                }
-                const data = await response.json();
-                // write this data to users subcollection
-                data.forEach((userData) => {
-                  // call writeToDB function to write to the database using user id
-                  writeToDB(userData, `goals/${id}/users`);
-                  console.log(userData);
-
-                });
-                setUsers(data);
-            } catch (err) {
-                console.error("fetch user data,", err);
-            }
+        const response = await fetch(
+          "https://jsonplaceholder.typicode.com/users"
+        );
+        if (!response.ok) {
+          throw new Error("The request was not successful");
+        }
+        // if I get to here means that fetch was successful
+        const data = await response.json();
+        // write this data to users subcollection
+        data.forEach((userData) => {
+          //call writeToDB to write a document for this userData
+          writeToDB(userData, `goals/${id}/users`);
+        });
+        setUsers(data);
+      } catch (err) {
+        console.log("fetch user data ", err);
+      }
     }
     fetchUserData();
-    }, []);
-
-    return (
-        <View>
-        <Text>Goal Users</Text>
-        <FlatList>
-            data={users}
-            renderItem={({ item }) => {
-                return (
-                    <View>
-                        <Text>{item.name}</Text>
-                    </View>
-                );
-            }}
-        </FlatList>
-        </View>
-    );
+  }, []);
+  return (
+    <View>
+      <FlatList
+        data={users}
+        renderItem={({ item }) => {
+          return <Text>{item.name}</Text>;
+        }}
+      />
+    </View>
+  );
 };
 
 export default GoalUsers;
+
+const styles = StyleSheet.create({});
