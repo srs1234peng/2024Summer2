@@ -1,11 +1,11 @@
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, Button } from "react-native";
-import React from "react";
-import { useState } from "react";
+import { StyleSheet, View, Button } from "react-native";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const Map = ({chooseLocationHandler}) => {
+const Map = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const navigation = useNavigation();
 
     const initialRegion = {
         latitude: 37.78825,
@@ -14,25 +14,43 @@ const Map = ({chooseLocationHandler}) => {
         longitudeDelta: 0.0421,
     };
 
-    return (
-        <>
-        <MapView>
-            style={styles.map}
-            initialRegion={initialRegion}
-            onPress={(e) => {
-                setSelectedLocation({
-                latitude:e.nativeEvent.coordinate.latitude,
-                longitude:e.nativeEvent.coordinate.longitude
-            });
-            }}
-            <Marker
-                coordinate={selectedLocation}
-                title="Selected Location"
-            />
-        </MapView>
-        <Button title="Choose Location" onPress={chooseLocationHandler} />
+    const selectLocationHandler = (e) => {
+        setSelectedLocation({
+            latitude: e.nativeEvent.coordinate.latitude,
+            longitude: e.nativeEvent.coordinate.longitude,
+        });
+    };
 
-        </>
+    const saveLocationHandler = () => {
+        if (selectedLocation) {
+            navigation.navigate('Profile', {
+                selectedLocation,
+            });
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <MapView
+                style={styles.map}
+                initialRegion={initialRegion}
+                onPress={selectLocationHandler}
+            >
+                {selectedLocation && (
+                    <Marker 
+                        coordinate={selectedLocation} 
+                        title="Selected Location" 
+                    />
+                )}
+            </MapView>
+            <View style={styles.buttonContainer}>
+                <Button 
+                    title="Choose Location"
+                    onPress={saveLocationHandler}
+                    disabled={!selectedLocation}
+                />
+            </View>
+        </View>
     );
 };
 
@@ -46,6 +64,12 @@ const styles = StyleSheet.create({
     map: {
         width: "100%",
         height: "100%",
+    },
+    buttonContainer: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        right: 20,
     },
 });
 
