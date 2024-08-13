@@ -12,6 +12,7 @@ import Profile from "./component/Profile"; // Import Profile component
 import Map from "./component/Map"; // Import Map component
 import { AntDesign } from '@expo/vector-icons'; // Import icons
 import LocationManager from "./component/LocationManager";
+import * as Notification from "expo-notifications";
 
 const Stack = createNativeStackNavigator();
 
@@ -71,6 +72,16 @@ const AppStack = (setIsAuthenticated) => (
     <Stack.Screen name="Map" component={Map} />
   </>
 );
+
+Notification.setNotificationHandler({
+  handleNotification: async (notification) => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    };
+  },
+});
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
