@@ -1,18 +1,37 @@
+import { View, Text, Button, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { updateDetails } from "../Firebase/firestoreHelper"; // Adjust the path as necessary
+import GoalUsers from "./GoalUsers";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../Firebase/firebaseSetup";
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
+  const [imageUri, setImageUri] = useState("");
 
-  async function warningHandler() {
-    if (route.params && route.params.goalObj && route.params.goalObj.id) {
-      await updateDetails(route.params.goalObj.id, "goals", { warning: true });
-      setWarning(true);
-      navigation.setOptions({ title: "Warning!" });
-    }
+  function warningHandler() {
+    console.log("warning");
+    setWarning(true);
+    navigation.setOptions({ title: "Warning!" });
   }
 
+  useEffect(() => {
+    async function getImageUrl() {
+      if (route.params && route.params.goalObj.uri) {
+        try {
+          const imageRef = ref(storage, route.params.goalObj.uri);
+          console.log("image ref", route.params);
+          const url = await getDownloadURL(imageRef);
+          console.log(url);
+          setImageUri(url);
+        } catch (err) {
+          console.log("get image uri ", err);
+        }
+      }
+    }
+    getImageUrl();
+  }, [route.params]);
+
+  // waits till the render is done and then run the effect function
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
@@ -24,9 +43,20 @@ export default function GoalDetails({ navigation, route }) {
   return (
     <View>
       {route.params ? (
-        <Text style={warning && styles.warningStyle}>
-          You are seeing the details of the goal with text: {route.params.goalObj.text} and id: {route.params.goalObj.id}
-        </Text>
+        <View>
+          <Text style={warning && styles.warningStyle}>
+            You are seeing the details of the goal with text :
+            {route.params.goalObj.text} and id:{route.params.goalObj.id}
+          </Text>
+          {imageUri && (
+            <Image
+              source={{
+                uri: imageUri,
+              }}
+              style={styles.image}
+            />
+          )}
+        </View>
       ) : (
         <Text>More details</Text>
       )}
@@ -36,6 +66,7 @@ export default function GoalDetails({ navigation, route }) {
           navigation.push("Details");
         }}
       />
+      {route.params && <GoalUsers id={route.params.goalObj.id} />}
     </View>
   );
 }
@@ -44,4 +75,5 @@ const styles = StyleSheet.create({
   warningStyle: {
     color: "red",
   },
+  image: { width: 100, height: 100 },
 });
