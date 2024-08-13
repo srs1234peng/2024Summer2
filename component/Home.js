@@ -21,7 +21,7 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
 import * as Notifications from "expo-notifications";
-import { verifyPersmission } from "./NotificationManager";
+import { verifyPermissions } from "./NotificationManager";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -31,18 +31,24 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
     async function getToken() {
-      try{
+      try {
+        const hasPermission = await verifyPermissions();
+        if (!hasPermission) {
+          Alert.alert("You need to enable notifications");
+          return;
+        }
         if (Platform.OS === "android") {
           await Notifications.setNotificationChannelAsync("default", {
             name: "default",
             importance: Notifications.AndroidImportance.MAX,
           });
-          Notifications.getExpoPushTokenAsync({
-            projectId: Constants.expoConfig.extras.eas.projectId,
-    });
         }
-      }catch(err){
-        console.log("token", err);
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig.extra.eas.projectId
+        });
+      } catch (error) {
+        console.log("Error getting token: ", error);
       }
     }
     getToken();
