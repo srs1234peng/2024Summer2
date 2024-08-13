@@ -2,11 +2,7 @@ import { Button, Text, View, StyleSheet } from "react-native";
 import React from "react";
 import * as Notifications from "expo-notifications";
 
-const NotificationManager = () => {
-  const [response, requestPermission] = Notifications.usePermissions();
-  const [notification, setNotification] = React.useState(false);
-
-  async function verifyPermission() {
+export async function verifyPermission() {
     console.log(response);
     if (response.status === "granted") {
       return true;
@@ -14,6 +10,10 @@ const NotificationManager = () => {
     const permissionResponse = await requestPermission();
     return permissionResponse.status === "granted";
   };
+
+const NotificationManager = () => {
+  const [response, requestPermission] = Notifications.usePermissions();
+  const [notification, setNotification] = React.useState(false);
 
   async function scheduleNotificationHandler() {
     try {

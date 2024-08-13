@@ -20,6 +20,8 @@ import { auth, database } from "../Firebase/firebaseSetup";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
+import * as Notifications from "expo-notifications";
+import { verifyPersmission } from "./NotificationManager";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -27,6 +29,25 @@ export default function Home({ navigation }) {
   // const [receivedText, setReceivedText] = useState("");
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    async function getToken() {
+      try{
+        if (Platform.OS === "android") {
+          await Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance.MAX,
+          });
+          Notifications.getExpoPushTokenAsync({
+            projectId: Constants.expoConfig.extras.eas.projectId,
+    });
+        }
+      }catch(err){
+        console.log("token", err);
+      }
+    }
+    getToken();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = onSnapshot(
       query(
