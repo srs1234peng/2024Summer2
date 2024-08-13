@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Pressable } from "react-native";
+import { Button, Pressable, Linking } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -11,7 +11,6 @@ import LogIn from "./component/LogIn";
 import Profile from "./component/Profile"; // Import Profile component
 import Map from "./component/Map"; // Import Map component
 import { AntDesign } from '@expo/vector-icons'; // Import icons
-import LocationManager from "./component/LocationManager";
 import * as Notification from "expo-notifications";
 
 const Stack = createNativeStackNavigator();
@@ -31,11 +30,13 @@ const AppStack = (setIsAuthenticated) => (
       options={({ navigation }) => ({
         title: "All Goals",
         headerRight: () => (
-          <Button
-            onPress={() => navigation.navigate('Profile', { setIsAuthenticated })}
-            title="Profile"
-            color="darkmagenta"
-          />
+        <Pressable
+          onPress={() => navigation.navigate('Profile', { setIsAuthenticated })}
+          title="Profile"
+          color="darkmagenta"
+        >
+          <AntDesign name="user" size={24} color="black" />
+        </Pressable>
         ),
       })}
     />
@@ -92,6 +93,18 @@ export default function App() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notification.addNotificationResponseReceivedListener(
+      (notificationResponse) => {
+        console.log("notification", notificationResponse.notification.request.content.data.url);
+        Linking.openURL(notificationResponse.notification.request.content.data.url);
+      }
+    );
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return (
