@@ -21,7 +21,9 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
 import * as Notifications from "expo-notifications";
-import { verifyPermissions } from "./NotificationManager";
+import { verifyPermission } from "./NotificationManager";
+import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -32,7 +34,7 @@ export default function Home({ navigation }) {
   useEffect(() => {
     async function getToken() {
       try {
-        const hasPermission = await verifyPermissions();
+        const hasPermission = await verifyPermission();
         if (!hasPermission) {
           Alert.alert("You need to enable notifications");
           return;
@@ -47,6 +49,7 @@ export default function Home({ navigation }) {
         const tokenData = await Notifications.getExpoPushTokenAsync({
           projectId: Constants.expoConfig.extra.eas.projectId
         });
+        console.log("tokenData", tokenData);
       } catch (error) {
         console.log("Error getting token: ", error);
       }
@@ -73,6 +76,20 @@ export default function Home({ navigation }) {
       unsubscribe();
     };
   }, []);
+
+  async function pushNotificationHandler() {
+    fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        to: "ExponentPushToken[Ts5SwTBM3gLNigVxvYO4J_]",
+        title: "Push Notification",
+        body: "This is a push notification",
+      })
+    });
+  }
 
   //To receive data add a parameter
   function handleInputData(data) {
@@ -152,6 +169,7 @@ export default function Home({ navigation }) {
           componentStyle={styles.buttonStyle}
         >
           <Text style={styles.textStyle}>Add a goal</Text>
+          <Button title ="Push notification" onPress={pushNotificationHandler} />
         </PressableButton>
       </View>
       {/* <Text>Child 1</Text> */}

@@ -3,12 +3,19 @@ import React from "react";
 import * as Notifications from "expo-notifications";
 
 export async function verifyPermission() {
-    console.log(response);
+    try{
+      const response = await Notifications.getPermissionsAsync();
+      console.log("response", response);
     if (response.status === "granted") {
       return true;
     }
     const permissionResponse = await requestPermission();
     return permissionResponse.status === "granted";
+    }
+    catch (err) {
+      console.log("Error in getting permissions", err);
+      return false;
+    }
   };
 
 const NotificationManager = () => {
