@@ -16,8 +16,14 @@ import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { app } from "../Firebase/firebaseSetup";
-import { database } from "../Firebase/firebaseSetup";
-import { collection, onSnapshot } from "firebase/firestore";
+import { auth, database } from "../Firebase/firebaseSetup";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../Firebase/firebaseSetup";
+import * as Notifications from "expo-notifications";
+import { verifyPermission } from "./NotificationManager";
+import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 export default function Home({ navigation }) {
   // console.log(app); used for testing
@@ -26,33 +32,102 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
-      if (!querySnapshot.empty) {
-        const goalsArray = [];
-        querySnapshot.forEach((doc) => {
-          goalsArray.push({ ...doc.data(), id: doc.id });
+    async function getToken() {
+      try {
+        const hasPermission = await verifyPermission();
+        if (!hasPermission) {
+          Alert.alert("You need to enable notifications");
+          return;
+        }
+        if (Platform.OS === "android") {
+          await Notifications.setNotificationChannelAsync("default", {
+            name: "default",
+            importance: Notifications.AndroidImportance.MAX,
+          });
+        }
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+          projectId: Constants.expoConfig.extra.eas.projectId
         });
-        setGoals(goalsArray);
+        console.log("tokenData", tokenData);
+      } catch (error) {
+        console.log("Error getting token: ", error);
       }
-    });
+    }
+    getToken();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      query(
+        collection(database, "goals"), 
+        where("owner", "==", auth.currentUser.uid)
+    ),
+      (querySnapshot) => {
+        let newArray = [];
+        querySnapshot.forEach((doc) => {
+          newArray.push({ ...doc.data(), id: doc.id });
+        });
+        setGoals(newArray);
+      }
+    );
 
     return () => {
       unsubscribe();
     };
   }, []);
 
+  async function pushNotificationHandler() {
+    fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        to: "ExponentPushToken[Ts5SwTBM3gLNigVxvYO4J_]",
+        title: "Push Notification",
+        body: "This is a push notification",
+      })
+    });
+  }
+
   //To receive data add a parameter
   function handleInputData(data) {
     console.log("callback fn called with ", data);
+    // if the data contains image url, call the function to upload the image
+    async function retrieveUploadImage(uri){
+      try{
+      const response = await fetch(uri);
+      console.log("response", response);
+      if (!response.ok) {
+        console.error("The request was not successful");
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = ref(storage, `images/${imageName}`)
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+
+      console.log("uploaded image", uploadResult.metadata.fullPath);
+      const newGoal = { text: data.text, owner: auth.currentUser.uid, uri: uploadResult.metadata.fullPath};
+      writeToDB(newGoal, "goals");
+    }catch(err){
+      console.log("retrieve and upload image error", err);
+    };
+    }
+
+    let imageUri = "";
+    if (data.imageUri) {
+      // uploadImage(data.imageUrl);
+      imageUri = retrieveUploadImage(data.imageUri);
+    }
+  
     //define a new object {text:.., id:..}
     //set the text property with the data received
     //set the id property with a random number between 0 and 1
-    const newGoal = { text: data };
+    retrieveUploadImage(imageUri);
     //use updater function when updating the state variable based on existing values
     // add this object to goals array
     // call addToDB function to write to the database
-    writeToDB(newGoal, "goals");
-
     // setReceivedText(data);
     //hide the modal
     setModalVisible(false);
@@ -94,6 +169,7 @@ export default function Home({ navigation }) {
           componentStyle={styles.buttonStyle}
         >
           <Text style={styles.textStyle}>Add a goal</Text>
+          <Button title ="Push notification" onPress={pushNotificationHandler} />
         </PressableButton>
       </View>
       {/* <Text>Child 1</Text> */}
@@ -133,6 +209,16 @@ export default function Home({ navigation }) {
           // </ScrollView>
         )}
       </View>
+      {/* <View>
+        <Button
+          title="Go to Sign In"
+          onPress={() => navigation.navigate("LogIn")}
+        />
+      <Button
+        title="Go to Sign Up"
+        onPress={() => navigation.navigate('SignUp')}
+      />
+    </View> */}
       <StatusBar style="auto" />
     </SafeAreaView>
   );
